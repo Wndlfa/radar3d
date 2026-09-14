@@ -9,7 +9,13 @@ export const metadata: Metadata = {
     "Descubra produtos impressos em 3D vendendo na Shopee, encontre modelos semelhantes e confira a licença para comercializar.",
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({
+  children,
+  modal,
+}: {
+  children: React.ReactNode;
+  modal: React.ReactNode;
+}) {
   const me = await getMe();
   const usage = me ? await getUsage() : null;
   return (
@@ -34,6 +40,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <div className="mx-auto max-w-5xl">{children}</div>
           </main>
         </div>
+        {modal}
       </body>
     </html>
   );

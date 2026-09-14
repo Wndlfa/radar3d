@@ -91,6 +91,24 @@ body {
   }
 }
 
+/* Painel deslizante do modal (intercepting route) entra pela direita. */
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+.modal-panel {
+  animation: slide-in-right 0.24s cubic-bezier(0.32, 0.72, 0, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .modal-panel {
+    animation: none;
+  }
+}
+
 /* Foco visível e consistente (piso de qualidade). */
 :where(a, button, input, [tabindex]):focus-visible {
   outline: 2px solid var(--accent);
