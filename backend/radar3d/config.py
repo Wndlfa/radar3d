@@ -22,6 +22,12 @@ class Settings(BaseSettings):
     myminifactory_api_key: str = ""
 
     embeddings_provider: str = "stub"
+    # Provider "api" (CLIP multimodal hospedado — deixa o worker leve, sem torch).
+    # Default: Jina CLIP v2 (texto + imagem no mesmo espaço). dim truncado (Matryoshka).
+    embeddings_api_url: str = "https://api.jina.ai/v1/embeddings"
+    embeddings_api_key: str = ""
+    embeddings_api_model: str = "jina-clip-v2"
+    embeddings_api_dim: int = 512  # casa com a coluna Vector(512)
 
     # Auth (JWT assinado por HMAC — troque o segredo em produção).
     jwt_secret: str = "dev-secret-change-me"

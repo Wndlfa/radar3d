@@ -104,6 +104,9 @@ API (FastAPI):
 
 - Provider trocável (`stub`/`local_clip`/`api`) — `local_clip` = CLIP ViT-B-32
   no worker Debian; texto e imagem no mesmo espaço (foto do anúncio × render).
+- **`api`** = CLIP multimodal hospedado (default Jina CLIP v2, dim 512). **Não
+  usa torch** → em produção o worker roda na imagem leve (alpine) e o custo cai
+  muito. A API busca a imagem pela URL (sem download local). Recomendado p/ prod.
 - Score por cosseno, pesos **visual 0.6 · texto 0.25 · características 0.15**
   (visual é o sinal mais confiável de "mesmo objeto"), renormalizados quando
   falta algum sinal.

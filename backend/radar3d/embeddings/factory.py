@@ -18,9 +18,9 @@ def get_provider() -> EmbeddingProvider:
         return LocalClipProvider()
 
     if provider == "api":
-        raise NotImplementedError(
-            "Provider 'api' ainda não implementado — ver docs/plano §Fase 3."
-        )
+        from radar3d.embeddings.api_provider import ApiEmbeddingProvider
+
+        return ApiEmbeddingProvider()
 
     from radar3d.embeddings.stub import StubProvider
 
