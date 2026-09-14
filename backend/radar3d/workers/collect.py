@@ -24,19 +24,20 @@ def _enqueue_enrichment(product_id: str) -> None:
     Queue("radar3d", connection=conn).enqueue(enrich_product, product_id)
 
 
-def collect_shopee(queries: list[str] | None = None) -> dict:
+def collect_shopee(queries: list[str] | None = None, per_query: int | None = None) -> dict:
     """Roda uma rodada de coleta. Retorna contagem de novos/atualizados."""
     source = get_shopee_source()
     if not source.is_enabled():
         return {"source": source.name, "enabled": False, "new": 0, "updated": 0}
 
     queries = queries or settings.shopee_queries_list
+    per_query = per_query or settings.shopee_max_per_query
     session = SessionLocal()
     new = updated = 0
     new_ids: list[str] = []
     try:
         for query in queries:
-            for sp in source.discover(query, limit=50):
+            for sp in source.discover(query, limit=per_query):
                 if not sp.external_id:
                     continue
                 product = session.scalars(

@@ -37,9 +37,10 @@ class Settings(BaseSettings):
     shopee_affiliate_app_id: str = ""
     shopee_affiliate_secret: str = ""
     apify_token: str = ""
-    apify_shopee_actor: str = "viralanalyzer~shopee-affiliate-products"
-    # Termos/categorias-alvo da coleta diária (separados por vírgula).
-    shopee_queries: str = "controller stand,headphone stand,cable organizer"
+    apify_shopee_actor: str = "lergassy~shopee-scraper"
+    # Termos-alvo da coleta (PT — Shopee BR). Nichos imprimíveis em 3D.
+    shopee_queries: str = "suporte controle videogame,suporte headset,suporte de celular,organizador de cabos,luminaria abajur"
+    shopee_max_per_query: int = 30  # itens por termo por rodada (custo Apify)
     shopee_collect_hour: int = 3  # hora do dia (UTC) para a coleta agendada
 
     @property
