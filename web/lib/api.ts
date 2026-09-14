@@ -1,4 +1,4 @@
-import type { Product, ProductDetail, Trending } from "./types";
+import type { KpiPoint, Product, ProductDetail, Trending } from "./types";
 
 // Estas chamadas rodam em server components (dentro do container web), onde
 // "localhost" é o próprio web — não a API. Server-side usa o host interno do
@@ -71,6 +71,20 @@ export async function listTrending(
   });
   if (!res.ok) throw new Error("Falha ao carregar tendências");
   return res.json();
+}
+
+export async function listKpis(days = 30, token?: string): Promise<KpiPoint[]> {
+  try {
+    const res = await fetch(`${BASE}/products/kpis?days=${days}`, {
+      cache: "no-store",
+      headers: authHeaders(token),
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data?.points) ? data.points : [];
+  } catch {
+    return []; // sparkline é enfeite — nunca derruba a home
+  }
 }
 
 export interface ProductInput {

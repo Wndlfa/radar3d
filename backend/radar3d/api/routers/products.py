@@ -214,6 +214,55 @@ def trending(
     return results
 
 
+@router.get("/kpis")
+def kpis(
+    session: Session = Depends(get_session),
+    days: int = Query(30, le=90, description="Janela em dias para o histórico."),
+) -> dict:
+    """Histórico diário dos KPIs do painel (para as sparklines).
+
+    Um ponto por dia de coleta (snapshot) — sem preencher dias vazios, então a
+    linha reflete só os dados reais. Cresce conforme a coleta diária acumula.
+    Para cada dia: produtos monitorados, soma de vendas públicas e quantos têm
+    modelo comercializável (usando o último snapshot de cada produto até o dia).
+    """
+    window_start = (datetime.now(timezone.utc) - timedelta(days=days)).date()
+    snaps = session.scalars(
+        select(ProductSnapshot).order_by(ProductSnapshot.captured_at)
+    ).all()
+
+    by_product: dict[str, list[ProductSnapshot]] = {}
+    for s in snaps:
+        by_product.setdefault(s.product_id, []).append(s)
+
+    summary = _license_summary(session, list(by_product.keys()))
+    commercial = {pid for pid, v in summary.items() if v.get("commercial_available")}
+
+    all_days = sorted({s.captured_at.date() for s in snaps if s.captured_at.date() >= window_start})
+
+    points: list[dict] = []
+    for d in all_days:
+        monitored = sales = sellable = 0
+        for pid, plist in by_product.items():
+            latest = None
+            for s in plist:
+                if s.captured_at.date() <= d:
+                    latest = s
+                else:
+                    break  # snapshots vêm em ordem crescente
+            if latest is None:
+                continue
+            monitored += 1
+            sales += latest.public_sales or 0
+            if pid in commercial:
+                sellable += 1
+        points.append(
+            {"date": d.isoformat(), "monitored": monitored, "sales": sales, "sellable": sellable}
+        )
+
+    return {"points": points}
+
+
 @router.post("/{product_id}/snapshot", response_model=ProductOut)
 def add_snapshot(
     product_id: str, payload: SnapshotInput, session: Session = Depends(get_session)

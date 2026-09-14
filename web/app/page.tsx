@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { listProducts, type ListParams } from "@/lib/api";
-import type { Product } from "@/lib/types";
+import { listProducts, listKpis, type ListParams } from "@/lib/api";
+import type { KpiPoint, Product } from "@/lib/types";
 import { getToken } from "@/lib/session";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductRow } from "@/components/ProductRow";
 import { SearchBar } from "@/components/SearchBar";
+import { Sparkline } from "@/components/Sparkline";
 
 const SORTS = [
   { key: "sales", label: "Mais vendidos" },
@@ -20,12 +21,34 @@ function compact(n: number): string {
   return String(n);
 }
 
-function Stat({ label, value, hint }: { label: string; value: string; hint?: string }) {
+function Stat({
+  label,
+  value,
+  hint,
+  series,
+  color,
+}: {
+  label: string;
+  value: string;
+  hint?: string;
+  series: number[];
+  color: string;
+}) {
   return (
     <div className="rounded-lg border border-border bg-surface p-4 shadow-card">
       <p className="text-xs uppercase tracking-wider text-faint">{label}</p>
-      <p className="mt-1 font-display text-2xl font-bold tracking-tight tabular-nums">{value}</p>
-      {hint && <p className="mt-0.5 text-xs text-muted">{hint}</p>}
+      <div className="mt-1 flex items-end justify-between gap-3">
+        <div>
+          <p className="font-display text-2xl font-bold tracking-tight tabular-nums">{value}</p>
+          {hint && <p className="mt-0.5 text-xs text-muted">{hint}</p>}
+        </div>
+        {series.length >= 1 && (
+          <Sparkline values={series} color={color} className="h-8 w-24 flex-shrink-0" />
+        )}
+      </div>
+      {series.length < 2 && (
+        <p className="mt-1 text-[11px] text-faint">coletando histórico…</p>
+      )}
     </div>
   );
 }
@@ -54,10 +77,15 @@ export default async function Home({
     return s ? `/?${s}` : "/";
   };
 
+  const token = getToken();
   let products: Product[] = [];
   let error: string | null = null;
+  let kpis: KpiPoint[] = [];
   try {
-    products = await listProducts({ commercialOnly, q, sort }, getToken());
+    [products, kpis] = await Promise.all([
+      listProducts({ commercialOnly, q, sort }, token),
+      listKpis(30, token),
+    ]);
   } catch (e) {
     error = e instanceof Error ? e.message : "Não foi possível carregar os produtos.";
   }
@@ -85,12 +113,25 @@ export default async function Home({
       {/* Faixa de métricas — dados reais do que está monitorado */}
       {!error && (
         <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-          <Stat label="Produtos monitorados" value={compact(products.length)} />
-          <Stat label="Vendas públicas" value={compact(totalSales)} hint="somadas no radar" />
+          <Stat
+            label="Produtos monitorados"
+            value={compact(products.length)}
+            series={kpis.map((k) => k.monitored)}
+            color="var(--accent)"
+          />
+          <Stat
+            label="Vendas públicas"
+            value={compact(totalSales)}
+            hint="somadas no radar"
+            series={kpis.map((k) => k.sales)}
+            color="var(--accent)"
+          />
           <Stat
             label="Vendáveis"
             value={compact(vendaveis)}
             hint="com modelo comercializável"
+            series={kpis.map((k) => k.sellable)}
+            color="var(--lic-green)"
           />
         </div>
       )}

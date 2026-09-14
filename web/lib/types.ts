@@ -52,6 +52,13 @@ export interface ProductDetail extends Product {
   matches: Match[];
 }
 
+export interface KpiPoint {
+  date: string;
+  monitored: number;
+  sales: number;
+  sellable: number;
+}
+
 export interface Trending extends Product {
   period: string;
   growth_abs: number | null;
