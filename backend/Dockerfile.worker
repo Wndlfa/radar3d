@@ -1,0 +1,20 @@
+# Worker com embeddings CLIP self-hosted.
+# Debian full (python:3.11) porque torch/sentence-transformers só têm wheels
+# glibc (não musl/alpine). No seu Docker, tags -slim falharam mas o full roda.
+FROM python:3.11
+
+WORKDIR /app
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    HF_HOME=/models
+
+COPY pyproject.toml ./
+# Torch CPU (menor que o default com CUDA) + demais deps + extra ml.
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu && \
+    pip install --no-cache-dir -e ".[ml]"
+
+COPY . .
+
+CMD ["python", "-m", "radar3d.workers.run"]

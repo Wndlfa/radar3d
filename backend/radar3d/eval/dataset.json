@@ -1,0 +1,34 @@
+{
+  "notes": "Conjunto de avaliação rotulado do matching (Fase 3). Rótulos gold por source_url. PROVISÓRIO: rotulado por inspeção de título/thumbnail, não por foto real da Shopee. Ideal futuro: fotos reais de anúncios + negativos claros. gold: exact|similar|alternative|unrelated.",
+  "cases": [
+    {
+      "id": "dragon-controller-stand",
+      "product": {
+        "title": "controller stand",
+        "image_url": "https://videos.cults3d.com/NPrdSBW2TGp59wCsX_rmCnKoOi8=/516x516/filters:no_upscale()/https://fbi.cults3d.com/uploaders/33333571/illustration-file/a9c768dc-ba6c-4c88-a594-12ab59afebe7/Dragon_Bust_Accessory_Holder_Controller_Holder_3D_PRINT-2.gif"
+      },
+      "labels": [
+        {"source_url": "https://cults3d.com/:1868102", "gold": "exact", "note": "mesmo objeto da foto (cabeça de dragão)"},
+        {"source_url": "https://cults3d.com/:1334074", "gold": "similar", "note": "outro suporte cabeça de dragão - render diferente"},
+        {"source_url": "https://cults3d.com/:4413640", "gold": "alternative", "note": "suporte generico"},
+        {"source_url": "https://cults3d.com/:1163393", "gold": "alternative"},
+        {"source_url": "https://cults3d.com/:1704873", "gold": "alternative"},
+        {"source_url": "https://cults3d.com/:2146878", "gold": "alternative"},
+        {"source_url": "https://cults3d.com/:2102592", "gold": "alternative"},
+        {"source_url": "https://cults3d.com/:2026473", "gold": "alternative"},
+        {"source_url": "https://cults3d.com/:241607", "gold": "alternative"},
+        {"source_url": "https://cults3d.com/:1858164", "gold": "alternative", "note": "tematico xbox"},
+        {"source_url": "https://cults3d.com/:1588058", "gold": "alternative"},
+        {"source_url": "https://cults3d.com/:2085794", "gold": "alternative", "note": "hello kitty"},
+        {"source_url": "https://cults3d.com/:1948625", "gold": "alternative", "note": "kurama"},
+        {"source_url": "https://cults3d.com/:2934280", "gold": "alternative", "note": "piccolo"},
+        {"source_url": "https://cults3d.com/:976195", "gold": "alternative", "note": "master chief"},
+        {"source_url": "https://cults3d.com/:1107612", "gold": "alternative", "note": "spartan halo"},
+        {"source_url": "https://cults3d.com/:250972", "gold": "alternative"},
+        {"source_url": "https://cults3d.com/:355477", "gold": "unrelated", "note": "clip, nao suporte"},
+        {"source_url": "https://cults3d.com/:355481", "gold": "unrelated", "note": "clip, nao suporte"},
+        {"source_url": "https://cults3d.com/:459854", "gold": "unrelated", "note": "stitch stand generico"}
+      ]
+    }
+  ]
+}

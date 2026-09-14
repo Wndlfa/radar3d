@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------------------
+   Radar3D — identidade "build-chamber / radar".
+   As cores de licença (🟢🟡🔴) são semânticas e centrais: são a resposta
+   "posso vender?". O accent ciano é o "sinal" do radar. Ver design-system.md.
+--------------------------------------------------------------------------- */
+:root {
+  --bg: #0d1417;
+  --surface: #131c21;
+  --surface-2: #1b262c;
+  --border: #26323a;
+  --text: #e9eff2;
+  --text-muted: #8fa0aa;
+  --text-faint: #5d6d76;
+
+  --accent: #22c7e6; /* sinal do radar */
+  --accent-hover: #10b6d6;
+
+  /* Licença — semânticas, fixas (o coração do produto) */
+  --lic-green: #22c55e;
+  --lic-yellow: #e0a112;
+  --lic-red: #ef4444;
+  --lic-gray: #7c8b95;
+  --lic-warn: #d97706;
+
+  --font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-pop: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f6f7f8;
+    --surface: #ffffff;
+    --surface-2: #eef1f3;
+    --border: #dde3e7;
+    --text: #10191e;
+    --text-muted: #566069;
+    --text-faint: #8a97a0;
+    --shadow-card: 0 1px 2px rgba(16, 25, 30, 0.08);
+    --shadow-pop: 0 12px 32px rgba(16, 25, 30, 0.14);
+  }
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Motivo "layer line" do FDM: hairlines finas, usado em divisores/faixas. */
+.layerlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--border) 55%, transparent) 0 1px,
+    transparent 1px 6px
+  );
+}
+
+/* Sweep de radar: cone girando bem sutil, atrás do wordmark. */
+@keyframes radar-sweep {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.radar-sweep::before {
+  content: "";
+  position: absolute;
+  inset: -60%;
+  background: conic-gradient(
+    from 0deg,
+    color-mix(in srgb, var(--accent) 40%, transparent) 0deg,
+    transparent 45deg 360deg
+  );
+  animation: radar-sweep 6s linear infinite;
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .radar-sweep::before {
+    animation: none;
+    opacity: 0.12;
+  }
+}
+
+/* Foco visível e consistente (piso de qualidade). */
+:where(a, button, input, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
