@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { listProducts, type ListParams } from "@/lib/api";
+import type { Product } from "@/lib/types";
 import { getToken } from "@/lib/session";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductRow } from "@/components/ProductRow";
@@ -36,7 +37,7 @@ export default async function Home({
     return s ? `/?${s}` : "/";
   };
 
-  let products = [];
+  let products: Product[] = [];
   let error: string | null = null;
   try {
     products = await listProducts({ commercialOnly, q, sort }, getToken());

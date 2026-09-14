@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { listTrending } from "@/lib/api";
+import type { Trending } from "@/lib/types";
 import { getToken } from "@/lib/session";
 import { LicenseSummary } from "@/components/LicenseSummary";
 
@@ -18,7 +19,7 @@ export default async function Trending({
     ? searchParams.periodo
     : "week") as "day" | "week" | "month";
 
-  let rows = [];
+  let rows: Trending[] = [];
   let error: string | null = null;
   try {
     rows = await listTrending(period, getToken());
