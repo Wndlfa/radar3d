@@ -13,6 +13,23 @@ const SORTS = [
   { key: "price_desc", label: "Maior preço" },
 ] as const;
 
+// 84.7k → "84,7 mil"; 1.2M → "1,2 mi"
+function compact(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1).replace(".", ",")} mi`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1).replace(".", ",")} mil`;
+  return String(n);
+}
+
+function Stat({ label, value, hint }: { label: string; value: string; hint?: string }) {
+  return (
+    <div className="rounded-lg border border-border bg-surface p-4 shadow-card">
+      <p className="text-xs uppercase tracking-wider text-faint">{label}</p>
+      <p className="mt-1 font-display text-2xl font-bold tracking-tight tabular-nums">{value}</p>
+      {hint && <p className="mt-0.5 text-xs text-muted">{hint}</p>}
+    </div>
+  );
+}
+
 export default async function Home({
   searchParams,
 }: {
@@ -45,23 +62,45 @@ export default async function Home({
     error = e instanceof Error ? e.message : "Não foi possível carregar os produtos.";
   }
 
+  // Métricas honestas, calculadas do que está monitorado agora.
+  const totalSales = products.reduce((s, p) => s + (p.public_sales ?? 0), 0);
+  const vendaveis = products.filter((p) => p.commercial_available).length;
+
   return (
     <div>
       <div className="mb-6">
+        <p className="text-sm text-muted">Radar de oportunidades</p>
         <h1 className="font-display text-2xl font-bold tracking-tight">
           Produtos 3D em alta na Shopee
         </h1>
-        <p className="mt-1 max-w-xl text-sm text-muted">
-          O que está vendendo — e se você pode imprimir e vender. Cada faixa
-          colorida mostra a licença do modelo encontrado.
-        </p>
       </div>
 
-      {/* Barra de controles: busca + ordenação + filtro + view */}
-      <div className="mb-5 flex flex-wrap items-center gap-2">
-        <Suspense fallback={<div className="h-9 flex-1 rounded-md border border-border bg-surface" />}>
+      {/* Hero de busca */}
+      <div className="mb-4">
+        <Suspense fallback={<div className="h-11 rounded-md border border-border bg-surface" />}>
           <SearchBar />
         </Suspense>
+      </div>
+
+      {/* Faixa de métricas — dados reais do que está monitorado */}
+      {!error && (
+        <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <Stat label="Produtos monitorados" value={compact(products.length)} />
+          <Stat label="Vendas públicas" value={compact(totalSales)} hint="somadas no radar" />
+          <Stat
+            label="Vendáveis"
+            value={compact(vendaveis)}
+            hint="com modelo comercializável"
+          />
+        </div>
+      )}
+
+      {/* Controles: ordenação + filtro + view */}
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <span className="mr-auto text-xs uppercase tracking-wider text-faint">
+          {products.length} produto{products.length === 1 ? "" : "s"}
+          {q && <> · busca “{q}”</>}
+        </span>
         <div className="flex items-center gap-1 rounded-md border border-border p-0.5 text-xs">
           {SORTS.map((s) => (
             <Link
@@ -100,11 +139,6 @@ export default async function Home({
             </svg>
           </Link>
         </div>
-      </div>
-
-      <div className="mb-3 text-xs uppercase tracking-wider text-faint">
-        {products.length} produto{products.length === 1 ? "" : "s"}
-        {q && <> · busca “{q}”</>}
       </div>
 
       {error && (

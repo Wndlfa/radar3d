@@ -3,6 +3,8 @@ import { getProduct, ApiError } from "@/lib/api";
 import { getToken } from "@/lib/session";
 import { ModelRow } from "@/components/ModelRow";
 import { AutoRefresh } from "@/components/AutoRefresh";
+import { SaveButton } from "@/components/SaveButton";
+import type { Product } from "@/lib/types";
 
 export default async function ProductPage({ params }: { params: { id: string } }) {
   let product;
@@ -45,6 +47,25 @@ export default async function ProductPage({ params }: { params: { id: string } }
     );
   }
 
+  // Guardamos só os campos do card (sem a lista de matches) nos favoritos.
+  const favoriteView: Product = {
+    id: product.id,
+    title: product.title,
+    image_url: product.image_url,
+    price_brl: product.price_brl,
+    public_sales: product.public_sales,
+    trend: product.trend,
+    rating: product.rating,
+    shop_name: product.shop_name,
+    competitors: product.competitors,
+    shopee_url: product.shopee_url,
+    collected_at: product.collected_at,
+    models_count: product.matches.length,
+    commercial_available: product.commercial_available,
+    best_license_tier: product.best_license_tier,
+    protected_ip: product.protected_ip,
+  };
+
   return (
     <div>
       <Link href="/" className="text-sm text-accent hover:underline">
@@ -76,18 +97,21 @@ export default async function ProductPage({ params }: { params: { id: string } }
               {product.shop_name}
               {product.competitors != null && ` · ${product.competitors} concorrentes`}
             </p>
-            {product.shopee_url && (
-              // shopee_url carrega o offerLink (link de afiliado) quando a fonte
-              // é a API oficial/apify. rel="sponsored" é a marcação correta.
-              <a
-                href={product.shopee_url}
-                target="_blank"
-                rel="sponsored noopener noreferrer"
-                className="mt-2 inline-block rounded-md bg-[#ee4d2d] px-3 py-1.5 text-sm font-medium text-white hover:opacity-90"
-              >
-                Comprar na Shopee ↗
-              </a>
-            )}
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              {product.shopee_url && (
+                // shopee_url carrega o offerLink (link de afiliado) quando a fonte
+                // é a API oficial/apify. rel="sponsored" é a marcação correta.
+                <a
+                  href={product.shopee_url}
+                  target="_blank"
+                  rel="sponsored noopener noreferrer"
+                  className="inline-flex items-center gap-1 rounded-md bg-[#ee4d2d] px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
+                >
+                  Abrir anúncio na Shopee ↗
+                </a>
+              )}
+              <SaveButton product={favoriteView} variant="full" />
+            </div>
           </div>
         </div>
       </section>

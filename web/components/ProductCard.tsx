@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Product } from "@/lib/types";
 import { LicenseSummary, verdictColor } from "./LicenseSummary";
+import { SaveButton } from "./SaveButton";
 
 export function ProductCard({ product }: { product: Product }) {
   // A espinha à esquerda codifica o veredito de licença: a lista vira um radar
@@ -17,7 +18,10 @@ export function ProductCard({ product }: { product: Product }) {
         className="absolute inset-y-0 left-0 w-1"
         style={{ background: spine }}
       />
-      <div className="flex gap-3 p-4 pl-5">
+      <div className="absolute right-2 top-2 z-10">
+        <SaveButton product={product} />
+      </div>
+      <div className="flex gap-3 p-4 pl-5 pr-12">
         <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded bg-surface-2">
           {product.image_url && (
             // eslint-disable-next-line @next/next/no-img-element

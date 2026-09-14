@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Product } from "@/lib/types";
 import { LicenseSummary, verdictColor } from "./LicenseSummary";
+import { SaveButton } from "./SaveButton";
 
 // Visão em lista (densa): tudo numa linha. Complementa o ProductCard (grid).
 export function ProductRow({ product }: { product: Product }) {
@@ -30,6 +31,9 @@ export function ProductRow({ product }: { product: Product }) {
           modelsCount={product.models_count}
           protectedIp={product.protected_ip}
         />
+      </div>
+      <div className="flex-shrink-0">
+        <SaveButton product={product} />
       </div>
     </Link>
   );
