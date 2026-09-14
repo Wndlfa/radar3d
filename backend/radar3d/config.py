@@ -28,6 +28,9 @@ class Settings(BaseSettings):
     embeddings_api_key: str = ""
     embeddings_api_model: str = "jina-clip-v2"
     embeddings_api_dim: int = 512  # casa com a coluna Vector(512)
+    # Task LoRA (v3/v5). Vazio = padrão do modelo. Para match simétrico
+    # produto<->modelo, "text-matching" costuma ser melhor que retrieval.*
+    embeddings_api_task: str = ""
 
     # Auth (JWT assinado por HMAC — troque o segredo em produção).
     jwt_secret: str = "dev-secret-change-me"

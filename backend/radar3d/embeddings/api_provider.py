@@ -22,19 +22,22 @@ class ApiEmbeddingProvider(EmbeddingProvider):
             raise RuntimeError("EMBEDDINGS_API_KEY não configurada para o provider 'api'.")
         self.dim = settings.embeddings_api_dim
 
-    def _embed(self, inputs: list[dict]) -> list[list[float] | None]:
+    def _embed(self, inputs: list[dict], task: str = "") -> list[list[float] | None]:
         """Envia inputs já montados ({text|image}) e devolve vetores na ordem."""
         if not inputs:
             return []
+        body: dict = {
+            "model": settings.embeddings_api_model,
+            "dimensions": self.dim,
+            "input": inputs,
+        }
+        if task:  # task só se aplica a texto; imagem manda sem task
+            body["task"] = task
         try:
             resp = httpx.post(
                 settings.embeddings_api_url,
                 headers={"Authorization": f"Bearer {settings.embeddings_api_key}"},
-                json={
-                    "model": settings.embeddings_api_model,
-                    "dimensions": self.dim,
-                    "input": inputs,
-                },
+                json=body,
                 timeout=60,
             )
             resp.raise_for_status()
@@ -50,7 +53,7 @@ class ApiEmbeddingProvider(EmbeddingProvider):
         return out
 
     def embed_texts(self, texts: list[str]) -> list[list[float]]:
-        vecs = self._embed([{"text": t or " "} for t in texts])
+        vecs = self._embed([{"text": t or " "} for t in texts], task=settings.embeddings_api_task)
         # texto sempre deve ter vetor; se a API falhar, devolve zeros do tamanho certo
         return [v if v is not None else [0.0] * self.dim for v in vecs]
 
